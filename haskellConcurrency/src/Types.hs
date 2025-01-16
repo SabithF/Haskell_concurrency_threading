@@ -1,8 +1,10 @@
 module  Types where
 
 import Data.Time.Clock (UTCTime)
+import qualified Data.Map as Map
 
--- | Tyoe to send request from a client 
+
+-- | Type to send request from a client 
 data Request = Request {
     reqestID :: Int,
     requestContent :: String,
@@ -16,8 +18,10 @@ data Response = Response {
     respId :: Int,
     respContent :: String,
     respTime :: UTCTime
-    
 } deriving (Show)
 
 -- | Type handle the request queue 
 type RequestQueue = [Request]
+
+-- | Type to handle Client satistics
+type ClientStats = Map.Map Int (Int, Int)

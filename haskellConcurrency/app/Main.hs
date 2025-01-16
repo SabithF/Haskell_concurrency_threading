@@ -1,23 +1,24 @@
-module Main where
+module Main (main) where
 
 import Control.Concurrent
-import Control.Concurrent.MVar
 import Control.Monad (forM_, void)
 import Client
 import Server
 
 main :: IO ()
 main = do
-    -- Shared resources
+    -- Initialize the request queue, new channel, and MVars
     requestQueue <- newChan
     serverActive <- newMVar True
     requestCounter <- newMVar 0 -- Counting the requests
     responseCounter <- newMVar 0 -- Counting the responses processed
-    stopSignal <- newEmptyMVar  -- New MVar to signal clients to stop
+    --stopSignal <- newEmptyMVar  -- New MVar to signal clients to stop
     serverDone <- newEmptyMVar
 
     -- Start the server thread
-    forkIO $ initServer requestQueue 100 requestCounter responseCounter serverActive serverDone
+    _ <- forkIO 
+            $ initServer 
+                requestQueue 100 requestCounter responseCounter serverActive serverDone
 
     -- Start 10 client threads
     forM_ [1..10] $ \clientId -> void $ forkIO $ initClient clientId requestQueue serverActive requestCounter

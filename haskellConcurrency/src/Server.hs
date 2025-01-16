@@ -3,7 +3,6 @@
 module Server where
 
 import Control.Concurrent
-import Control.Concurrent.MVar
 import Data.Time.Clock (getCurrentTime)
 import Types
 import System.IO.Error (tryIOError)
@@ -17,7 +16,7 @@ initServer requestQueue maxReq requestCounter responseCounter serverActive serve
     putStrLn "Server has stopped."
 
   where
-    -- | Function to process and limit the requests
+    -- | Function to process and limitthe requests
     processRequests :: Int -> IO ()
     processRequests count
         | count >= maxReq = do
