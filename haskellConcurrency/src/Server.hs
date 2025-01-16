@@ -1,38 +1,42 @@
+{-# LANGUAGE ScopedTypeVariables #-}
+
 module Server where
 
 import Control.Concurrent
 import Control.Concurrent.MVar
 import Data.Time.Clock (getCurrentTime)
 import Types
-import Control.Monad (void)
+import System.IO.Error (tryIOError)
+import Control.Exception (IOException)
 
--- | Server function to process requests
-initServer :: MVar RequestQueue -> Int -> MVar Int -> MVar Bool -> MVar () -> IO ()
-initServer queue maxReq processedCounter serverActive serverDone = processRequests 0
+-- | Function to initialize the server 
+initServer :: Chan Request -> Int -> MVar Int -> MVar Int -> MVar Bool -> MVar () -> IO ()
+initServer requestQueue maxReq requestCounter responseCounter serverActive serverDone = do
+    processRequests 0
+    putMVar serverDone () -- Notify when the server is done
+    putStrLn "Server has stopped."
+
   where
+    -- | Function to process and limit the requests
     processRequests :: Int -> IO ()
     processRequests count
         | count >= maxReq = do
-            putStrLn "All the requests have been processed successfully."
+            --putStrLn "Server has stopped."
             swapMVar serverActive False -- Signal clients to stop adding requests
-            putMVar serverDone () -- Signal the server is done
+            putMVar serverDone () -- Notify that the server is done
         | otherwise = do
-            reqQueueList <- takeMVar queue
-            case reqQueueList of
-                [] -> do
-                    putMVar queue reqQueueList
-                    threadDelay 100000
-                    processRequests count
-                (req:rest) -> do
-                    if count + 1 == maxReq
-                        then void $ swapMVar serverActive False -- Signal stop before processing the last request
-                        else return ()
+            req <- readChan requestQueue -- Read a request from the queue
+            resTime <- getCurrentTime
+            let response = Response (reqestID req) ("Response to " ++ requestContent req) resTime
 
-                    putMVar queue rest
-                    currentTime <- getCurrentTime
-                    let response = Response (reqestID req) ("Response to the request " ++ requestContent req) currentTime
+            -- Write to log file and handle any exceptions
+            result <- tryIOError $ appendFile "requests.log" (show (req, response) ++ "\n")
+            case result of
+                Left (e :: IOException) -> putStrLn $ "Error writing to log file: " ++ show e
+                Right _ -> return ()
 
-                    appendFile "requests.log" (show (req, response) ++ "\n")
-                    modifyMVar_ processedCounter (\c -> return (c + 1)) -- Increment the response counter
-                    putStrLn $ "Processed request from Client ID: " ++ show (reqestID req)
-                    processRequests (count + 1)
+            -- Increment response counter
+            modifyMVar_ responseCounter (\c -> return (c + 1))
+            putStrLn $ "Processed request from Client ID: " ++ show (reqestID req)
+            processRequests (count + 1)
+

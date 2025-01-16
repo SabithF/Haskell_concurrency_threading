@@ -1,27 +1,30 @@
 module Client where
 
-import Types
 import Control.Concurrent
 import Control.Concurrent.MVar
 import System.Random (randomRIO)
+import Types
+import Control.Monad (forever)
 import Data.Time.Clock (getCurrentTime)
-import Control.Monad (when)
 
--- | Client function to send requests to the server
-initClient :: Int -> MVar RequestQueue -> MVar Int -> MVar Bool -> IO ()
-initClient clientId queue requestCounter serverActive = clientLoop
-  where
-    clientLoop = do
-        isActive <- readMVar serverActive
-        when isActive $ do
+-- | Function to initialize the clients
+initClient :: Int -> Chan Request -> MVar Bool -> MVar Int -> IO ()
+initClient clientId requestQueue serverActive requestCounter = forever $ do
+    active <- readMVar serverActive
+    if not active
+        then return () -- Stop adding requests if the server is inactive
+        else do
+            -- Adding random time interval between requests
             delay <- randomRIO (1, 3) :: IO Int
             threadDelay (delay * 1000000)
 
-            modifyMVar_ queue $ \reqQueueList -> do
-                currentTime <- getCurrentTime
-                let request = Request clientId ("A request from the client: " ++ show clientId) currentTime
-                putStrLn $ "Client " ++ show clientId ++ " added a request"
-                return (reqQueueList ++ [request])
-
-            modifyMVar_ requestCounter (\c -> return (c + 1)) -- Increment the request counter
-            clientLoop
+            -- Add a new request only if the limit is not exceeded
+            reqCount <- readMVar requestCounter
+            if reqCount >= 100
+                then swapMVar serverActive False >> return () -- Stop clients
+                else do
+                    reqTime <- getCurrentTime
+                    let request = Request clientId ("Request from Client " ++ show clientId) reqTime
+                    writeChan requestQueue request
+                    modifyMVar_ requestCounter (\c -> return (c + 1))
+                    putStrLn $ "Client " ++ show clientId ++ " added a request."
