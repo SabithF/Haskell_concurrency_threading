@@ -6,7 +6,7 @@ cabal-version: 2.2
 
 name:           haskellConcurrency
 version:        0.1.0.0
-description:    Please see the README on GitHub at <https://github.com/githubuser/haskellConcurrency#readme>
+description:    Please see the README on GitHub at <https://github.com/SabithF/Haskell_concurrency_threading/tree/main/haskellConcurrency>
 homepage:       https://github.com/githubuser/haskellConcurrency#readme
 bug-reports:    https://github.com/githubuser/haskellConcurrency/issues
 author:         Author name here

@@ -5,7 +5,7 @@ import Control.Monad (forM_, void)
 import Client
 import Server
 
--- | Main function to start the server and clients
+-- | Main function 
 main :: IO ()
 main = do
     -- Initialize the request queue, new channel, and MVars
@@ -13,7 +13,6 @@ main = do
     serverActive <- newMVar True
     requestCounter <- newMVar 0 -- Counting the requests
     responseCounter <- newMVar 0 -- Counting the responses processed
-    --stopSignal <- newEmptyMVar  -- New MVar to signal clients to stop
     serverDone <- newEmptyMVar
 
     -- Start the server thread
@@ -27,8 +26,13 @@ main = do
 
     -- Wait for the server to finish
     takeMVar serverDone
-    totalRequests <- readMVar requestCounter
     totalResponses <- readMVar responseCounter
 
     -- Print the total requests and responses processed
     putStrLn $ "Total Request-Responses Processed: " ++ show totalResponses
+
+
+
+-- Commands to run – 
+-- “stack build”- to build the project 
+-- “stack run +RTS -N4” – to run the project using threads. 

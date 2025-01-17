@@ -1,0 +1,26 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><link rel="stylesheet" type="text/css" href="style.css" /><script type="text/javascript" src="highlight.js"></script></head><body><pre><span class="hs-keyword">module</span><span> </span><span class="hs-identifier">Logger</span><span> </span><span class="hs-keyword">where</span><span> </span><span>
+</span><span id="line-2"></span><span>
+</span><span id="line-3"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">System.IO</span></span><span>
+</span><span id="line-4"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Types.html"><span class="hs-identifier">Types</span></a></span><span>
+</span><span id="line-5"></span><span>
+</span><span id="line-6"></span><span class="annot"><span class="hs-comment">-- | Function to write the log file</span></span><span>
+</span><span id="line-7"></span><span class="annot"><a href="Logger.html#writeLogger"><span class="hs-identifier hs-type">writeLogger</span></a></span><span> </span><span class="hs-glyph">::</span><span>  </span><span class="hs-special">[</span><span class="hs-special">(</span><span class="annot"><a href="Types.html#Request"><span class="hs-identifier hs-type">Request</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Types.html#Response"><span class="hs-identifier hs-type">Response</span></a></span><span class="hs-special">)</span><span class="hs-special">]</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">IO</span></span><span> </span><span class="hs-special">(</span><span class="hs-special">)</span><span>
+</span><span id="line-8"></span><span id="writeLogger"><span class="annot"><span class="annottext">writeLogger :: [(Request, Response)] -&gt; IO ()
+</span><a href="Logger.html#writeLogger"><span class="hs-identifier hs-var hs-var">writeLogger</span></a></span></span><span> </span><span id="local-6989586621679057807"><span class="annot"><span class="annottext">[(Request, Response)]
+</span><a href="#local-6989586621679057807"><span class="hs-identifier hs-var">logs</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; IOMode -&gt; (Handle -&gt; IO ()) -&gt; IO ()
+forall r. FilePath -&gt; IOMode -&gt; (Handle -&gt; IO r) -&gt; IO r
+</span><span class="hs-identifier hs-var">withFile</span></span><span> </span><span class="annot"><span class="annottext">FilePath
+</span><span class="hs-string">&quot;requests.log&quot;</span></span><span> </span><span class="annot"><span class="annottext">IOMode
+</span><span class="hs-identifier hs-var">WriteMode</span></span><span> </span><span class="annot"><span class="annottext">((Handle -&gt; IO ()) -&gt; IO ()) -&gt; (Handle -&gt; IO ()) -&gt; IO ()
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="hs-glyph">\</span><span id="local-6989586621679057810"><span class="annot"><span class="annottext">Handle
+</span><a href="#local-6989586621679057810"><span class="hs-identifier hs-var">handle</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-keyword">do</span><span>
+</span><span id="line-9"></span><span>    </span><span class="annot"><span class="annottext">((Request, Response) -&gt; IO ()) -&gt; [(Request, Response)] -&gt; IO ()
+forall (t :: * -&gt; *) (m :: * -&gt; *) a b.
+(Foldable t, Monad m) =&gt;
+(a -&gt; m b) -&gt; t a -&gt; m ()
+</span><span class="hs-identifier hs-var">mapM_</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Handle -&gt; (Request, Response) -&gt; IO ()
+forall a. Show a =&gt; Handle -&gt; a -&gt; IO ()
+</span><span class="hs-identifier hs-var">hPrint</span></span><span> </span><span class="annot"><span class="annottext">Handle
+</span><a href="#local-6989586621679057810"><span class="hs-identifier hs-var">handle</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">[(Request, Response)]
+</span><a href="#local-6989586621679057807"><span class="hs-identifier hs-var">logs</span></a></span></pre></body></html>
