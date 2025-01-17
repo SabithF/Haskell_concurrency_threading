@@ -1,4 +1,8 @@
-module  Types where
+module  Types (
+    Request(..),
+    Response(..),
+    RequestQueue
+) where
 
 import Data.Time.Clock (UTCTime)
 

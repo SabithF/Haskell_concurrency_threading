@@ -1,4 +1,6 @@
-module Client where
+module Client (
+    initClient
+) where
 
 import Control.Concurrent
 import Control.Concurrent.MVar

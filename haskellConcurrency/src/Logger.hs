@@ -1,4 +1,6 @@
-module Logger where 
+module Logger (
+    writeLogger
+) where 
 
 import System.IO
 import Types

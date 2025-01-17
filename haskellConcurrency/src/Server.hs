@@ -1,6 +1,8 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 
-module Server where
+module Server (
+    initServer
+) where
 
 import Control.Concurrent
 import Data.Time.Clock (getCurrentTime)
