@@ -5,6 +5,7 @@ import Control.Monad (forM_, void)
 import Client
 import Server
 
+-- | Main function to start the server and clients
 main :: IO ()
 main = do
     -- Initialize the request queue, new channel, and MVars
@@ -30,5 +31,4 @@ main = do
     totalResponses <- readMVar responseCounter
 
     -- Print the total requests and responses processed
-    putStrLn $ "Total Requests Added: " ++ show totalRequests
-    putStrLn $ "Total Responses Processed: " ++ show totalResponses
+    putStrLn $ "Total Request-Responses Processed: " ++ show totalResponses

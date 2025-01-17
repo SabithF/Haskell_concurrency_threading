@@ -11,16 +11,15 @@ import Control.Exception (IOException)
 -- | Function to initialize the server 
 initServer :: Chan Request -> Int -> MVar Int -> MVar Int -> MVar Bool -> MVar () -> IO ()
 initServer requestQueue maxReq requestCounter responseCounter serverActive serverDone = do
-    processRequests 0
-    putMVar serverDone () -- Notify when the server is done
-    putStrLn "Server has stopped."
+    processRequestsCount 0
+    putMVar serverDone () -- printing a message when the server has completed processing
+    putStrLn "Server has terminated."
 
   where
     -- | Function to process and limitthe requests
-    processRequests :: Int -> IO ()
-    processRequests count
+    processRequestsCount :: Int -> IO ()
+    processRequestsCount count
         | count >= maxReq = do
-            --putStrLn "Server has stopped."
             swapMVar serverActive False -- Signal clients to stop adding requests
             putMVar serverDone () -- Notify that the server is done
         | otherwise = do
@@ -37,5 +36,5 @@ initServer requestQueue maxReq requestCounter responseCounter serverActive serve
             -- Increment response counter
             modifyMVar_ responseCounter (\c -> return (c + 1))
             putStrLn $ "Processed request from Client ID: " ++ show (reqestID req)
-            processRequests (count + 1)
+            processRequestsCount (count + 1)
 

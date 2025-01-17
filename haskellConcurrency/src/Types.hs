@@ -1,7 +1,6 @@
 module  Types where
 
 import Data.Time.Clock (UTCTime)
-import qualified Data.Map as Map
 
 
 -- | Type to send request from a client 
@@ -22,6 +21,3 @@ data Response = Response {
 
 -- | Type handle the request queue 
 type RequestQueue = [Request]
-
--- | Type to handle Client satistics
-type ClientStats = Map.Map Int (Int, Int)

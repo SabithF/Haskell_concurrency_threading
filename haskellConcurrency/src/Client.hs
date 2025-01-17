@@ -12,7 +12,7 @@ initClient :: Int -> Chan Request -> MVar Bool -> MVar Int -> IO ()
 initClient clientId requestQueue serverActive requestCounter = forever $ do
     active <- readMVar serverActive
     if not active
-        then return () -- Stop adding requests if the server is inactive
+        then return ()  -- Stop the client loop if server is inactive
         else do
             -- Adding random time interval between requests
             delay <- randomRIO (1, 3) :: IO Int
@@ -21,10 +21,12 @@ initClient clientId requestQueue serverActive requestCounter = forever $ do
             -- Add a new request only if the limit is not exceeded
             reqCount <- readMVar requestCounter
             if reqCount >= 100
-                then swapMVar serverActive False >> return () -- Stop clients
+                then do
+                    swapMVar serverActive False
+                    return ()  -- Stop the client if request limit reached
                 else do
                     reqTime <- getCurrentTime
                     let request = Request clientId ("Request from Client " ++ show clientId) reqTime
                     writeChan requestQueue request
                     modifyMVar_ requestCounter (\c -> return (c + 1))
-                    putStrLn $ "Client " ++ show clientId ++ " added a request."
+                    putStrLn $ "Client " ++ show clientId ++ " sent a request."
